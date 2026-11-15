@@ -30,12 +30,12 @@ export interface RsvpContact {
 }
 
 export const wedding = {
-  groom: "Usman Tariq",
-  groomUrdu: "عثمان طارق",
+  groom: "Bilal Aslam",
+  groomUrdu: "بلال اسلم",
   groomFamily: "",
   groomFamilyUrdu: "",
-  bride: "Maryam Siddiqui",
-  brideUrdu: "مریم صدیقی",
+  bride: "Fatima Waheed",
+  brideUrdu: "فاطمہ وحید",
   brideFamily: "",
   brideFamilyUrdu: "",
 
@@ -114,10 +114,10 @@ export const wedding = {
 
   // RSVP rabta numbers — ASLI numbers yahan likhein
   rsvpContacts: [
-    { name: "Usman's Family", phone: "+92 300 0000000" },
-    { name: "Maryam's Family", phone: "+92 300 0000000" },
+    { name: "Bilal's Family", phone: "+92 300 0000000" },
+    { name: "Fatima's Family", phone: "+92 300 0000000" },
   ] as RsvpContact[],
 
-  lookingForward: "Usman Tariq & Maryam Siddiqui",
-  lookingForwardUrdu: "عثمان طارق اور مریم صدیقی",
+  lookingForward: "Bilal Aslam & Fatima Waheed",
+  lookingForwardUrdu: "بلال اسلم اور فاطمہ وحید",
 };

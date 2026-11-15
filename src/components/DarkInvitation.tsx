@@ -5,7 +5,7 @@ import { wedding as w } from "@/lib/wedding";
 function Ornament() { return <div className="ornament" aria-hidden="true"><span /><svg viewBox="0 0 100 28"><path d="M0 14Q20 14 25 9Q30 1 37 9Q42 18 48 14Q40 9 45 4Q50-2 55 4Q60 9 52 14Q58 18 63 9Q70 1 75 9Q80 14 100 14M50 14Q38 19 44 24Q50 29 50 14Q50 29 56 24Q62 19 50 14" fill="none" stroke="currentColor" strokeWidth="1" /></svg><span /></div>; }
 function Crown() { return <svg className="crown" viewBox="0 0 72 48" aria-hidden="true"><path d="M10 13L21 28L36 8L51 28L62 13L55 39H17Z" fill="none" stroke="currentColor" strokeWidth="1.6" /><path d="M18 43H54M21 35H51" stroke="currentColor" strokeWidth="1.4" /><circle cx="10" cy="11" r="2.2" fill="currentColor" /><circle cx="36" cy="6" r="2.2" fill="currentColor" /><circle cx="62" cy="11" r="2.2" fill="currentColor" /></svg>; }
 function Rose({ className = "" }: { className?: string }) { return <svg className={`rose ${className}`} viewBox="0 0 140 170" aria-hidden="true"><g fill="none" stroke="currentColor" strokeWidth="1.1"><path d="M66 164Q76 112 62 73M66 136Q38 141 22 119Q53 115 66 136M68 118Q101 113 114 87Q80 85 68 118M65 151Q92 157 112 139Q81 131 65 151" /><path d="M65 24C21-3 9 47 39 66C7 83 35 111 60 91C88 119 119 88 98 66C139 40 107 3 83 23C82 7 60 4 65 24Z" /><path d="M65 24C39 17 29 43 48 58C31 78 57 94 68 74C91 88 109 60 87 48C103 22 72 13 65 38C43 38 52 61 70 59C88 53 76 30 65 38" /></g></svg>; }
-function Card({ title, children, icon = true }: { title: string; children: React.ReactNode; icon?: boolean }) { return <section className="arch-card" data-reveal>{icon && <Crown />}<h2>{title}</h2><Ornament />{children}</section>; }
+function Card({ title, children, icon = true }: { title: string; children: React.ReactNode; icon?: boolean }) { return <section className="section-card" data-reveal>{icon && <Crown />}<h2>{title}</h2><Ornament />{children}</section>; }
 
 /* Golden dust drifting over the hero */
 function GoldDust({ active }: { active: boolean }) {
@@ -49,28 +49,6 @@ function Marquee() {
     return <div className="marquee" aria-hidden="true"><div className="marquee-track">{row.map((s, i) => s === '✦' ? <b key={i}>✦</b> : <span key={i}>{s}</span>)}</div></div>;
 }
 
-function ConfettiBurst() {
-    const pieces = useMemo(() => {
-        const colors = ['#B89555', '#E8D6B5', '#842E49', '#9c5a68', '#a67c3d', '#D9BC7A'];
-        return Array.from({ length: 80 }, (_, i) => ({ left: Math.random() * 100, delay: Math.random() * 1.4, duration: 2.6 + Math.random() * 2.6, size: 5 + Math.random() * 8, color: colors[i % colors.length], round: Math.random() > 0.55 }));
-    }, []);
-    return <div className="confetti-burst" aria-hidden="true">{pieces.map((p, i) => <span key={i} style={{ left: `${p.left}%`, width: p.size, height: p.round ? p.size : p.size * 0.55, background: p.color, borderRadius: p.round ? '50%' : '2px', animationDelay: `${p.delay}s`, animationDuration: `${p.duration}s` }} />)}</div>;
-}
-function ScratchDate({ urdu }: { urdu: boolean }) {
-    const canvas = useRef<HTMLCanvasElement>(null); const [revealed, setRevealed] = useState(false); const [confetti, setConfetti] = useState(false); const drawing = useRef(false); const last = useRef<{ x: number; y: number } | null>(null); const strokes = useRef(0);
-    useEffect(() => {
-        const el = canvas.current; if (!el) return; const ctx = el.getContext('2d', { willReadFrequently: true }); if (!ctx) return;
-        const dpr = window.devicePixelRatio || 1; el.width = 260 * dpr; el.height = 240 * dpr; ctx.scale(dpr, dpr);
-        const gradient = ctx.createRadialGradient(100, 80, 10, 130, 120, 200);
-        gradient.addColorStop(0, '#842E49'); gradient.addColorStop(.45, '#6e2439'); gradient.addColorStop(1, '#4f1a2b');
-        ctx.fillStyle = gradient; ctx.fillRect(0, 0, 260, 240);
-        for (let i = 0; i < 15000; i++) { ctx.fillStyle = i % 3 ? 'rgba(232,214,181,.55)' : 'rgba(60,20,28,.4)'; ctx.fillRect(Math.random() * 260, Math.random() * 240, 1, 1); }
-        ctx.globalCompositeOperation = 'destination-out';
-    }, []);
-    useEffect(() => { if (!revealed) return; setConfetti(true); const t = setTimeout(() => setConfetti(false), 7000); return () => clearTimeout(t); }, [revealed]);
-    function scratch(e: PointerEvent<HTMLCanvasElement>) { if (!drawing.current || revealed) return; const el = canvas.current, ctx = el?.getContext('2d'); if (!el || !ctx) return; const rect = el.getBoundingClientRect(), point = { x: (e.clientX - rect.left) * 260 / rect.width, y: (e.clientY - rect.top) * 240 / rect.height }; ctx.lineWidth = 38; ctx.lineCap = 'round'; ctx.beginPath(); if (last.current) ctx.moveTo(last.current.x, last.current.y); else ctx.moveTo(point.x, point.y); ctx.lineTo(point.x, point.y); ctx.stroke(); last.current = point; strokes.current++; if (strokes.current % 6 === 0) { const pixels = ctx.getImageData(0, 0, el.width, el.height).data; let clear = 0, count = 0; for (let i = 3; i < pixels.length; i += 32) { count++; if (pixels[i] < 100) clear++; } if (clear / count > .4) setRevealed(true); } }
-    return <section className="scratch-section" data-reveal>{confetti && <ConfettiBurst />}<h2>{revealed ? (urdu ? 'ہماری نئی زندگی کا آغاز' : 'Our forever begins') : (urdu ? 'تاریخ جاننے کے لیے کھرچیں' : 'Scratch to Reveal')}</h2><Ornament /><svg width="0" height="0" aria-hidden="true"><defs><clipPath id="heart-clip" clipPathUnits="objectBoundingBox"><path d="M.5,.96C.5,.96 .06,.70 .06,.36C.06,.18 .20,.06 .32,.06C.42,.06 .48,.14 .5,.24C.52,.14 .58,.06 .68,.06C.80,.06 .94,.18 .94,.36C.94,.70 .5,.96 .5,.96Z" /></clipPath></defs></svg><div className={`scratch-heart ${revealed ? 'revealed' : ''}`}><div className="revealed-date"><em>{urdu ? 'آپ مدعو ہیں!' : "You’re Invited!"}</em><strong>{w.dateText}</strong><span>{w.day}</span>{w.time.split('·').map((part, i) => <span key={i}>{part.trim()}</span>)}<b>♥</b></div><canvas ref={canvas} aria-label="Scratch to reveal wedding date" onPointerDown={e => { drawing.current = true; last.current = null; e.currentTarget.setPointerCapture(e.pointerId); scratch(e); }} onPointerMove={scratch} onPointerUp={() => { drawing.current = false; last.current = null; }} onPointerCancel={() => { drawing.current = false; }} /></div><button className="reveal-keyboard" onClick={() => setRevealed(true)}>{revealed ? (urdu ? 'ہم آپ کے منتظر ہیں' : 'We look forward to seeing you') : (urdu ? 'یا تاریخ دیکھنے کے لیے دبائیں' : 'Or tap here to reveal')}</button><SaveDate urdu={urdu} /></section>;
-}
 function SaveDate({ urdu }: { urdu: boolean }) {
     const [open, setOpen] = useState(false);
     function stamp(d: Date) { return d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'; }
@@ -187,8 +165,8 @@ export default function DarkInvitation() {
         {showNames && (
             <>
                 <Marquee />
+                <section className="save-date-section" data-reveal><SaveDate urdu={urdu} /></section>
                 <main id="main" dir={urdu ? 'rtl' : 'ltr'}>
-                    <ScratchDate urdu={urdu} />
                     <section className="gallery-section" data-reveal><Ornament /><div className="gallery-frame"><button className="gallery-image" onClick={() => setLightbox(slide)} aria-label="Open wedding photograph">{photos.map((p, i) => <img src={p.src} alt={p.alt} key={i} className={i === slide ? 'active' : ''} loading="lazy" />)}</button><button className="gallery-prev" onClick={() => setSlide(i => (i + 3) % 4)} aria-label="Previous photo">‹</button><button className="gallery-next" onClick={() => setSlide(i => (i + 1) % 4)} aria-label="Next photo">›</button></div><div className="gallery-dots">{photos.map((_, i) => <button key={i} className={i === slide ? 'active' : ''} onClick={() => setSlide(i)} aria-label={`Photo ${i + 1}`} aria-pressed={i === slide} />)}</div></section>
                     <Card title={t('Counting Down to Forever', 'ہماری خوشیوں کے آغاز میں')}><Countdown urdu={urdu} /></Card>
                     <Card title={t('Program Timeline', 'تقریبات کا پروگرام')}><div className="timeline">{w.timeline.map((event, i) => <div className="timeline-item" key={i}>{event.day && <p className="event-day">{event.day}</p>}<p className="event-time">{event.time}</p><h3 className="event-title">{urdu ? event.urdu : event.title}</h3>{(urdu ? event.noteUrdu : event.note) && <p className="event-desc">{urdu ? event.noteUrdu : event.note}</p>}{i === w.timeline.length - 1 && <p className="time-note">{urdu ? w.punctualityUrdu : w.punctuality}</p>}</div>)}</div></Card>
@@ -206,7 +184,7 @@ export default function DarkInvitation() {
                     </Card>
                     {w.preEvents.length > 0 && <Card title={t('Pre-Wedding Events', 'شادی سے پہلے کی تقریبات')}><div className="timeline">{w.preEvents.map((event, i) => <div className="timeline-item" key={i}><p className="event-day">{event.day}</p><p className="event-time">{event.time}</p><h3 className="event-title">{urdu ? event.urdu : event.title}</h3>{(urdu ? event.noteUrdu : event.note) && <p className="event-desc">{urdu ? event.noteUrdu : event.note}</p>}</div>)}</div></Card>}
                     <section className="closing" data-reveal>
-                        <div className="monogram" aria-hidden="true"><span className="m-line" /><span className="m-diamond"><span>U·M</span></span><span className="m-line" /></div>
+                        <div className="monogram" aria-hidden="true"><span className="m-line" /><span className="m-diamond"><span>B·F</span></span><span className="m-line" /></div>
                         <Rose className="closing-rose left" /><Rose className="closing-rose right" /><Crown />
                         <p>{t("We can’t wait to celebrate with you!", 'آپ کی آمد کے منتظر!')}</p>
                         <h2>{urdu ? (<>{w.groomUrdu}<br />اور {w.brideUrdu}</>) : (<>{w.groom}<br />& {w.bride}</>)}</h2>
