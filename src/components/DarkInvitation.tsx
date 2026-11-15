@@ -61,12 +61,12 @@ function Petals() {
    The photo is 1672x941 and shown with object-fit: cover, so a lantern's
    screen position depends on the hero's aspect ratio — it is measured from
    the hero box, and hidden when its lantern is cropped out of frame. */
-const HERO_IMG_W = 1672, HERO_IMG_H = 941;
+const HERO_IMG_W = 941, HERO_IMG_H = 1672;
 const LANTERNS = [
-    { fx: .18, fy: .29, size: 150 },
-    { fx: .82, fy: .29, size: 150 },
-    { fx: .125, fy: .81, size: 130 },
-    { fx: .855, fy: .81, size: 130 },
+    { fx: .11, fy: .30, size: 150 },
+    { fx: .89, fy: .30, size: 150 },
+    { fx: .105, fy: .64, size: 130 },
+    { fx: .895, fy: .64, size: 130 },
 ];
 function useLanternPositions(heroRef: React.RefObject<HTMLElement | null>) {
     const [pos, setPos] = useState<{ x: number; y: number; size: number; visible: boolean }[] | null>(null);
@@ -120,7 +120,6 @@ function InvitationSection({ urdu }: { urdu: boolean }) {
     </section>;
 }
 export default function DarkInvitation() {
-    const [started, setStarted] = useState(false);
     const [ready, setReady] = useState(false);
     const [preloaderDismissed, setPreloaderDismissed] = useState(false);
     const [showNames, setShowNames] = useState(false);
@@ -189,14 +188,14 @@ export default function DarkInvitation() {
         }
     }, [showNames]);
     useEffect(() => { if (lightbox === null) return; const previous = document.body.style.overflow; document.body.style.overflow = 'hidden'; function key(e: KeyboardEvent) { if (e.key === 'Escape') setLightbox(null); if (e.key === 'ArrowRight') setLightbox(i => i === null ? null : (i + 1) % 4); if (e.key === 'ArrowLeft') setLightbox(i => i === null ? null : (i + 3) % 4); } window.addEventListener('keydown', key); return () => { document.body.style.overflow = previous; window.removeEventListener('keydown', key); }; }, [lightbox]);
-    function start() {
-        if (started) return;
-        setStarted(true);
+    useEffect(() => {
+        if (!ready) return;
         const au = audio.current;
-        if (au) { au.muted = muted; au.play().catch(() => { /* autoplay blocked */ }); }
+        if (au) { au.muted = true; au.play().catch(() => { /* autoplay blocked until unmute */ }); }
         if (timer.current) clearTimeout(timer.current);
         timer.current = setTimeout(() => { setShowNames(true); }, 900);
-    }
+        return () => { if (timer.current) clearTimeout(timer.current); };
+    }, [ready]);
     function toggleSound() {
         const next = !muted;
         setMuted(next);
@@ -218,7 +217,6 @@ export default function DarkInvitation() {
         <audio ref={audio} src="/media/wedding-song.mp3" loop preload="auto" aria-hidden="true" />
         <section ref={heroRef} className={`hero ${showNames ? 'names-visible' : ''}`}>
             <img className="hero-photo" src="/images/hero.jpg" alt="Ivory wedding archway with golden lanterns and burgundy flowers" fetchPriority="high" />
-            {!started && ready && <button className="opening-hit-area" onClick={start} aria-label={t('Tap to open your invitation', 'دعوت نامہ کھولیں')} />}
             <div className="hero-shade" />
             <GoldDust active={!reducedMotion} />
             {lanterns && lanterns.filter(l => l.visible).map((l, i) => <span key={i} className={`lantern-glow lg-${i}`} style={{ left: `${l.x}%`, top: `${l.y}%`, width: l.size, height: l.size }} aria-hidden="true" />)}

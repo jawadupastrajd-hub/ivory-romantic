@@ -58,7 +58,7 @@ export const wedding = {
 
   // Countdown + Save-the-date target (pehli taqreeb — Mehndi)
   date: "2027-01-16T18:00:00+05:00",
-  venue: "Canel Home Hall",
+  venue: "Canal Homes",
   address: "Mehndi Venue",
 
   timeline: [
@@ -84,12 +84,12 @@ export const wedding = {
     {
       tag: "Mehndi",
       tagUrdu: "مہندی",
-      name: "Canel Home Hall",
-      nameUrdu: "کینل ہوم ہال",
+      name: "Canal Homes",
+      nameUrdu: "کینال ہومز",
       address: "Saturday, 16 January 2027 · 6:00 PM onwards",
       addressUrdu: "ہفتہ، 16 جنوری 2027 · شام 6 بجے سے",
-      mapQuery: "Canel Home Hall",
-      mapUrl: "https://www.google.com/maps/search/?api=1&query=Canel+Home+Hall",
+      mapQuery: "Canal Homes",
+      mapUrl: "https://www.google.com/maps/search/?api=1&query=Canal+Homes",
     },
     {
       tag: "Shalima",
