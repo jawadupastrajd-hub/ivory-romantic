@@ -31,7 +31,7 @@ function GoldDust({ active }: { active: boolean }) {
                 p.y -= p.s; if (p.y < -6) { p.y = H + 6; p.x = Math.random() * W; }
                 const tw = .55 + .45 * Math.sin(t * 2 + p.ph);
                 ctx!.beginPath();
-                ctx!.fillStyle = `rgba(230,204,153,${(p.a * tw).toFixed(3)})`;
+                ctx!.fillStyle = `rgba(232,214,181,${(p.a * tw).toFixed(3)})`;
                 ctx!.arc(p.x + Math.sin(t + p.ph) * p.sw * .3, p.y, p.r, 0, Math.PI * 2);
                 ctx!.fill();
             }
@@ -44,14 +44,14 @@ function GoldDust({ active }: { active: boolean }) {
 }
 
 function Marquee() {
-    const items = [`${w.groom}`, '✦', `${w.bride}`, '✦', '16 — 17 JANUARY 2027', '✦'];
+    const items = [`${w.groom}`, '✦', `${w.bride}`, '✦', '6 — 7 MARCH 2027', '✦'];
     const row = [...items, ...items];
     return <div className="marquee" aria-hidden="true"><div className="marquee-track">{row.map((s, i) => s === '✦' ? <b key={i}>✦</b> : <span key={i}>{s}</span>)}</div></div>;
 }
 
 function ConfettiBurst() {
     const pieces = useMemo(() => {
-        const colors = ['#8a6a25', '#a8863a', '#b25a6e', '#f7efe3', '#a34a5e', '#d4698a'];
+        const colors = ['#B89555', '#E8D6B5', '#842E49', '#9c5a68', '#a67c3d', '#D9BC7A'];
         return Array.from({ length: 80 }, (_, i) => ({ left: Math.random() * 100, delay: Math.random() * 1.4, duration: 2.6 + Math.random() * 2.6, size: 5 + Math.random() * 8, color: colors[i % colors.length], round: Math.random() > 0.55 }));
     }, []);
     return <div className="confetti-burst" aria-hidden="true">{pieces.map((p, i) => <span key={i} style={{ left: `${p.left}%`, width: p.size, height: p.round ? p.size : p.size * 0.55, background: p.color, borderRadius: p.round ? '50%' : '2px', animationDelay: `${p.delay}s`, animationDuration: `${p.duration}s` }} />)}</div>;
@@ -62,9 +62,9 @@ function ScratchDate({ urdu }: { urdu: boolean }) {
         const el = canvas.current; if (!el) return; const ctx = el.getContext('2d', { willReadFrequently: true }); if (!ctx) return;
         const dpr = window.devicePixelRatio || 1; el.width = 260 * dpr; el.height = 240 * dpr; ctx.scale(dpr, dpr);
         const gradient = ctx.createRadialGradient(100, 80, 10, 130, 120, 200);
-        gradient.addColorStop(0, '#a34a5e'); gradient.addColorStop(.45, '#7c2f42'); gradient.addColorStop(1, '#5e2233');
+        gradient.addColorStop(0, '#842E49'); gradient.addColorStop(.45, '#6e2439'); gradient.addColorStop(1, '#4f1a2b');
         ctx.fillStyle = gradient; ctx.fillRect(0, 0, 260, 240);
-        for (let i = 0; i < 15000; i++) { ctx.fillStyle = i % 3 ? 'rgba(230,204,153,.5)' : 'rgba(60,20,28,.4)'; ctx.fillRect(Math.random() * 260, Math.random() * 240, 1, 1); }
+        for (let i = 0; i < 15000; i++) { ctx.fillStyle = i % 3 ? 'rgba(232,214,181,.55)' : 'rgba(60,20,28,.4)'; ctx.fillRect(Math.random() * 260, Math.random() * 240, 1, 1); }
         ctx.globalCompositeOperation = 'destination-out';
     }, []);
     useEffect(() => { if (!revealed) return; setConfetti(true); const t = setTimeout(() => setConfetti(false), 7000); return () => clearTimeout(t); }, [revealed]);
@@ -195,7 +195,7 @@ export default function DarkInvitation() {
                     <Card title={t('Venue & Location', 'مقامِ تقریب')}>
                         <Rose className="venue-rose" />
                         {w.venues.map((v, i) => (
-                            <div className="venue-card-item" key={i} style={i > 0 ? { marginTop: '26px', paddingTop: '22px', borderTop: '1px dashed #a8863a55' } : undefined}>
+                            <div className="venue-card-item" key={i} style={i > 0 ? { marginTop: '26px', paddingTop: '22px', borderTop: '1px dashed #E9DDC9' } : undefined}>
                                 <span className="event-tag">{t(v.tag, v.tagUrdu)}</span>
                                 <h3 className="venue-title">{t(v.name, v.nameUrdu)}</h3>
                                 <p className="venue-address">{t(v.address, v.addressUrdu)}</p>
