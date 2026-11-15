@@ -61,11 +61,20 @@ img{display:block;max-width:100%}
 
 /* ---------- hero ---------- */
 .hero{height:100vh;height:100dvh;width:100%;position:relative;background:#FCFAF7;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;animation:heroZoom 20s ease-in-out infinite alternate}
+@keyframes heroZoom{from{transform:scale(1)}to{transform:scale(1.05)}}
 .opening-hit-area{position:absolute;inset:0;background:transparent;z-index:6;width:100%;height:100%}
 .hero-shade{position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.30) 0%,rgba(255,255,255,.06) 38%,rgba(255,255,255,.30) 85%,var(--bg) 100%);opacity:0;transition:opacity 1.4s;z-index:2}
 .names-visible .hero-shade{opacity:1}
 .dust-canvas{position:absolute;inset:0;z-index:3;pointer-events:none}
+.lantern-glow{position:absolute;translate:-50% -50%;border-radius:50%;opacity:.7;background:radial-gradient(circle,rgba(255,196,90,.55) 0%,rgba(255,176,66,.24) 42%,rgba(255,176,66,0) 70%);pointer-events:none;z-index:3;animation:lanternFlicker 4.5s ease-in-out infinite}
+.lantern-glow.lg-1{animation-delay:1.1s}
+.lantern-glow.lg-2{animation-delay:2.2s}
+.lantern-glow.lg-3{animation-delay:3.1s}
+@keyframes lanternFlicker{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.95;transform:scale(1.07)}}
+.petals{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.petal{position:absolute;top:0;border-radius:100% 6px 100% 6px;opacity:0;animation:petalFall linear infinite}
+@keyframes petalFall{0%{opacity:0;transform:translate(0,-5vh) rotate(0deg)}8%{opacity:.75}50%{transform:translate(3vw,52vh) rotate(180deg)}85%{opacity:.7}100%{opacity:0;transform:translate(-2.5vw,108vh) rotate(330deg)}}
 .couple-heading{position:relative;text-align:center;padding:20px;z-index:4;color:#30252A;pointer-events:none;opacity:0;translate:0 30px;transition:opacity 1.6s,translate 1.6s cubic-bezier(.16,1,.3,1);margin-top:-55px}
 .names-visible .couple-heading{opacity:1;translate:0 0}
 .small-heart{font-size:20px;display:block;margin-bottom:14px;color:#821B3D;text-shadow:0 0 14px rgba(130,27,61,.35)}
@@ -73,9 +82,16 @@ img{display:block;max-width:100%}
 .heart-rule{font-size:13px;letter-spacing:8px;text-align:center;margin:18px auto;color:var(--gold)}
 .couple-heading .heart-rule{color:#C49A45;font-size:11px;margin:15px auto}
 .couple-heading h1{font-family:var(--script);font-size:84px;font-weight:400;line-height:1.05;background:linear-gradient(175deg,#E3C98F 5%,#C49A45 55%,#8f6f2f 95%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,.65),0 3px 10px rgba(48,37,42,.18))}
+@keyframes heroReveal{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.names-visible .small-heart,.names-visible .hero-intro{animation:heroReveal 1.2s ease .15s both}
+.names-visible .heart-rule{animation:heroReveal 1.1s ease .55s both}
+.names-visible .couple-heading h1:first-of-type{animation:heroReveal 1.3s ease .85s both}
+.names-visible .amp{animation:heroReveal 1.1s ease 1.4s both}
+.names-visible .couple-heading h1:last-of-type{animation:heroReveal 1.3s ease 1.75s both}
 .couple-heading h1 small{display:block;font-family:var(--serif);font-size:17px;line-height:1.45;font-style:italic;font-weight:400;white-space:pre-line;margin-top:20px;color:#40383B;-webkit-text-fill-color:#40383B}
 .amp{font-family:var(--script);font-size:32px;color:#A67F2E;display:block;margin:17px auto 8px}
-.scroll-cue{position:absolute;bottom:27px;left:50%;translate:-50% 0;display:flex;flex-direction:column;gap:6px;align-items:center;text-decoration:none;font-family:var(--sans);font-size:10px;letter-spacing:2px;color:rgba(48,37,42,.75);z-index:5;animation:bob 2s ease-in-out infinite}
+.scroll-cue{position:absolute;bottom:27px;left:50%;translate:-50% 0;display:flex;flex-direction:column;gap:6px;align-items:center;text-decoration:none;font-family:var(--sans);font-size:10px;letter-spacing:2px;color:rgba(48,37,42,.75);z-index:5;animation:bob 2s ease-in-out infinite,cueIn 1s ease 2.8s both}
+@keyframes cueIn{from{opacity:0}to{opacity:1}}
 .scroll-cue span{font-size:22px;color:var(--gold)}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
 .language-toggle,.sound-toggle{position:fixed;z-index:20;box-shadow:0 3px 12px rgba(48,37,42,.15)}
@@ -256,4 +272,15 @@ footer p{font-size:12px;letter-spacing:1px;margin-top:9px;color:#6f625e}
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
   [data-reveal]{opacity:1;translate:none}
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion: reduce){
+  .hero-photo{animation:none}
+  .lantern-glow,.petal{animation:none!important}
+  .couple-heading{transition:none}
+  .names-visible .small-heart,.names-visible .hero-intro,.names-visible .heart-rule,.names-visible .couple-heading h1,.names-visible .amp{animation:none}
+  .scroll-cue{animation:none}
+  .marquee-track{animation:none}
+  .preloader-dots span{animation:none}
 }

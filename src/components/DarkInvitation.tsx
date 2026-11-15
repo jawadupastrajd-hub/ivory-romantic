@@ -43,6 +43,52 @@ function GoldDust({ active }: { active: boolean }) {
     return <canvas ref={ref} className="dust-canvas" aria-hidden="true" />;
 }
 
+/* Delicate falling rose petals over the hero */
+const PETALS = [
+    { left: 4, size: 13, dur: 19, delay: 0, color: '#821B3D' },
+    { left: 12, size: 10, dur: 23, delay: 6, color: '#D6336C' },
+    { left: 23, size: 12, dur: 17, delay: 11, color: '#E75480' },
+    { left: 46, size: 9, dur: 21, delay: 3, color: '#821B3D' },
+    { left: 74, size: 12, dur: 18, delay: 8, color: '#D6336C' },
+    { left: 86, size: 10, dur: 22, delay: 1, color: '#E75480' },
+    { left: 94, size: 13, dur: 20, delay: 13, color: '#821B3D' },
+];
+function Petals() {
+    return <div className="petals" aria-hidden="true">{PETALS.map((p, i) => <span key={i} className="petal" style={{ left: `${p.left}%`, width: p.size, height: p.size * 1.3, background: p.color, animationDuration: `${p.dur}s`, animationDelay: `${p.delay}s` }} />)}</div>;
+}
+
+/* Warm lantern glows, aligned with the real lanterns in the hero photo.
+   The photo is 1672x941 and shown with object-fit: cover, so a lantern's
+   screen position depends on the hero's aspect ratio — it is measured from
+   the hero box, and hidden when its lantern is cropped out of frame. */
+const HERO_IMG_W = 1672, HERO_IMG_H = 941;
+const LANTERNS = [
+    { fx: .18, fy: .29, size: 150 },
+    { fx: .82, fy: .29, size: 150 },
+    { fx: .125, fy: .81, size: 130 },
+    { fx: .855, fy: .81, size: 130 },
+];
+function useLanternPositions(heroRef: React.RefObject<HTMLElement | null>) {
+    const [pos, setPos] = useState<{ x: number; y: number; size: number; visible: boolean }[] | null>(null);
+    useEffect(() => {
+        function measure() {
+            const el = heroRef.current; if (!el) return;
+            const W = el.clientWidth, H = el.clientHeight; if (!W || !H) return;
+            const s = Math.max(W / HERO_IMG_W, H / HERO_IMG_H);
+            const rw = HERO_IMG_W * s, rh = HERO_IMG_H * s;
+            const ox = (W - rw) / 2, oy = (H - rh) / 2;
+            setPos(LANTERNS.map(l => {
+                const x = (ox + l.fx * rw) / W * 100, y = (oy + l.fy * rh) / H * 100;
+                return { x, y, size: Math.round(l.size * s), visible: x > -3 && x < 103 && y > -3 && y < 103 };
+            }));
+        }
+        measure();
+        window.addEventListener('resize', measure);
+        return () => window.removeEventListener('resize', measure);
+    }, [heroRef]);
+    return pos;
+}
+
 function Marquee() {
     const items = [`${w.groom}`, '✦', `${w.bride}`, '✦', '16–17 JANUARY 2027', '✦'];
     const row = [...items, ...items];
@@ -84,6 +130,16 @@ export default function DarkInvitation() {
     const [lightbox, setLightbox] = useState<number | null>(null);
     const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const audio = useRef<HTMLAudioElement>(null);
+    const heroRef = useRef<HTMLElement>(null);
+    const lanterns = useLanternPositions(heroRef);
+    const [reducedMotion, setReducedMotion] = useState(false);
+    useEffect(() => {
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        setReducedMotion(mq.matches);
+        const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+        mq.addEventListener('change', onChange);
+        return () => mq.removeEventListener('change', onChange);
+    }, []);
     const photos = [{ src: '/images/slide-2.jpg', alt: 'Bride and groom in Pakistani wedding attire' }, { src: '/images/slide-3.jpg', alt: 'Pakistani wedding outfit inspiration' }, { src: '/images/slide-4.jpg', alt: 'Traditional sherwani and waistcoat inspiration' }, { src: '/images/couple.png', alt: 'A new beginning together' }];
 
     useEffect(() => {
@@ -160,11 +216,13 @@ export default function DarkInvitation() {
         )}
         <button className="language-toggle" onClick={() => setUrdu(!urdu)}>◎ {urdu ? 'English' : 'اردو'}</button><button className="sound-toggle" onClick={toggleSound} aria-label={muted ? (urdu ? 'موسیقی آن کریں' : 'Unmute music') : (urdu ? 'موسیقی بند کریں' : 'Mute music')} aria-pressed={!muted}>{muted ? <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" /><path d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" /></svg> : <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" /><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" /></svg>}</button>
         <audio ref={audio} src="/media/wedding-song.mp3" loop preload="auto" aria-hidden="true" />
-        <section className={`hero ${showNames ? 'names-visible' : ''}`}>
-            <img className="hero-photo" src="/images/hero.jpg" alt="Bright white floral wedding archway" fetchPriority="high" />
+        <section ref={heroRef} className={`hero ${showNames ? 'names-visible' : ''}`}>
+            <img className="hero-photo" src="/images/hero.jpg" alt="Ivory wedding archway with golden lanterns and burgundy flowers" fetchPriority="high" />
             {!started && ready && <button className="opening-hit-area" onClick={start} aria-label={t('Tap to open your invitation', 'دعوت نامہ کھولیں')} />}
             <div className="hero-shade" />
-            <GoldDust active={true} />
+            <GoldDust active={!reducedMotion} />
+            {lanterns && lanterns.filter(l => l.visible).map((l, i) => <span key={i} className={`lantern-glow lg-${i}`} style={{ left: `${l.x}%`, top: `${l.y}%`, width: l.size, height: l.size }} aria-hidden="true" />)}
+            <Petals />
             <div className="couple-heading"><span className="small-heart">♥</span><p className="hero-intro">{t(w.heroIntro, w.heroIntroUrdu)}</p><div className="heart-rule">— ♥ —</div><h1>{urdu ? w.groomUrdu : w.groom}{w.groomFamily && <small>{t(w.groomFamily, w.groomFamilyUrdu)}</small>}</h1><span className="amp">{urdu ? 'اور' : 'with'}</span><h1>{urdu ? w.brideUrdu : w.bride}{w.brideFamily && <small>{t(w.brideFamily, w.brideFamilyUrdu)}</small>}</h1></div>
             {showNames && <a className="scroll-cue" href="#main">{t('SCROLL', 'مزید دیکھیں')}<span>⌄</span></a>}
         </section>
