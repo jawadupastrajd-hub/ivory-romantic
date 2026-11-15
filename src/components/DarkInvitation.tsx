@@ -44,7 +44,7 @@ function GoldDust({ active }: { active: boolean }) {
 }
 
 function Marquee() {
-    const items = [`${w.groom}`, '✦', `${w.bride}`, '✦', '6 — 7 MARCH 2027', '✦'];
+    const items = [`${w.groom}`, '✦', `${w.bride}`, '✦', '16–17 JANUARY 2027', '✦'];
     const row = [...items, ...items];
     return <div className="marquee" aria-hidden="true"><div className="marquee-track">{row.map((s, i) => s === '✦' ? <b key={i}>✦</b> : <span key={i}>{s}</span>)}</div></div>;
 }
@@ -58,6 +58,21 @@ function SaveDate({ urdu }: { urdu: boolean }) {
     return <div className="save-date"><button className="gold-button" onClick={() => setOpen(!open)} aria-expanded={open}>♧ {urdu ? 'تاریخ محفوظ کریں' : 'SAVE THE DATE'}</button>{open && <div className="calendar-menu"><a href={google} target="_blank" rel="noreferrer">Google Calendar ↗</a><button onClick={download}>Apple / Outlook Calendar ↓</button></div>}</div>;
 }
 function Countdown({ urdu }: { urdu: boolean }) { const [values, setValues] = useState([0, 0, 0, 0]); useEffect(() => { function tick() { const d = Math.max(0, new Date(w.date).getTime() - Date.now()); setValues([Math.floor(d / 86400000), Math.floor(d / 3600000) % 24, Math.floor(d / 60000) % 60, Math.floor(d / 1000) % 60]); } tick(); const id = setInterval(tick, 1000); return () => clearInterval(id); }, []); return <div className="countdown">{values.map((value, i) => <div key={i}><strong>{String(value).padStart(2, '0')}</strong><span>{(urdu ? ['دن', 'گھنٹے', 'منٹ', 'سیکنڈ'] : ['DAYS', 'HOURS', 'MINUTES', 'SECONDS'])[i]}</span></div>)}</div>; }
+function InvitationSection({ urdu }: { urdu: boolean }) {
+    return <section className="invitation-section" data-reveal>
+        <h2>{urdu ? 'ہماری نئی زندگی کا آغاز' : 'Our forever begins'}</h2>
+        <Ornament />
+        <p className="invite-sub">{urdu ? 'آپ مدعو ہیں!' : "You’re Invited!"}</p>
+        <div className="invite-dates">
+            <strong>{w.dateText}</strong>
+            <span>{w.day}</span>
+            {w.time.split('·').map((part, i) => <span key={i}>{part.trim()}</span>)}
+        </div>
+        <span className="invite-heart" aria-hidden="true">♥</span>
+        <p className="invite-forward">{urdu ? 'ہم آپ کے منتظر ہیں' : 'We look forward to seeing you'}</p>
+        <SaveDate urdu={urdu} />
+    </section>;
+}
 export default function DarkInvitation() {
     const [started, setStarted] = useState(false);
     const [ready, setReady] = useState(false);
@@ -67,21 +82,16 @@ export default function DarkInvitation() {
     const [muted, setMuted] = useState(true);
     const [slide, setSlide] = useState(0);
     const [lightbox, setLightbox] = useState<number | null>(null);
-    const video = useRef<HTMLVideoElement>(null), timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
     const audio = useRef<HTMLAudioElement>(null);
     const photos = [{ src: '/images/slide-2.jpg', alt: 'Bride and groom in Pakistani wedding attire' }, { src: '/images/slide-3.jpg', alt: 'Pakistani wedding outfit inspiration' }, { src: '/images/slide-4.jpg', alt: 'Traditional sherwani and waistcoat inspiration' }, { src: '/images/couple.png', alt: 'A new beginning together' }];
 
     useEffect(() => {
         let mounted = true;
-        const criticalImages = ['/images/envelope.jpg', '/images/slide-2.jpg', '/images/slide-3.jpg', '/images/slide-4.jpg', '/images/couple.png'];
-        let loadedImages = 0; let videoReady = false; let audioReady = false;
-        const checkAllReady = () => { if (!mounted) return; if (loadedImages >= criticalImages.length && videoReady && audioReady) setReady(true); };
+        const criticalImages = ['/images/hero.jpg', '/images/slide-2.jpg', '/images/slide-3.jpg', '/images/slide-4.jpg', '/images/couple.png'];
+        let loadedImages = 0; let audioReady = false;
+        const checkAllReady = () => { if (!mounted) return; if (loadedImages >= criticalImages.length && audioReady) setReady(true); };
         criticalImages.forEach(src => { const img = new Image(); img.src = src; img.onload = () => { loadedImages++; checkAllReady(); }; img.onerror = () => { loadedImages++; checkAllReady(); }; });
-        const v = video.current;
-        if (v) {
-            if (v.readyState >= 2) { videoReady = true; checkAllReady(); }
-            else { const onLoaded = () => { videoReady = true; checkAllReady(); }; v.addEventListener('loadeddata', onLoaded, { once: true }); v.addEventListener('canplay', onLoaded, { once: true }); }
-        } else { videoReady = true; checkAllReady(); }
         const au = new Audio(); au.preload = 'auto'; au.src = '/media/wedding-song.mp3';
         const onAudio = () => { audioReady = true; checkAllReady(); };
         au.addEventListener('canplaythrough', onAudio, { once: true });
@@ -125,15 +135,11 @@ export default function DarkInvitation() {
     useEffect(() => { if (lightbox === null) return; const previous = document.body.style.overflow; document.body.style.overflow = 'hidden'; function key(e: KeyboardEvent) { if (e.key === 'Escape') setLightbox(null); if (e.key === 'ArrowRight') setLightbox(i => i === null ? null : (i + 1) % 4); if (e.key === 'ArrowLeft') setLightbox(i => i === null ? null : (i + 3) % 4); } window.addEventListener('keydown', key); return () => { document.body.style.overflow = previous; window.removeEventListener('keydown', key); }; }, [lightbox]);
     function start() {
         if (started) return;
-        const el = video.current;
-        if (!el) return;
         setStarted(true);
-        el.currentTime = 0;
-        el.play().catch(() => setShowNames(true));
         const au = audio.current;
         if (au) { au.muted = muted; au.play().catch(() => { /* autoplay blocked */ }); }
         if (timer.current) clearTimeout(timer.current);
-        timer.current = setTimeout(() => { setShowNames(true); }, 6000);
+        timer.current = setTimeout(() => { setShowNames(true); }, 900);
     }
     function toggleSound() {
         const next = !muted;
@@ -155,7 +161,7 @@ export default function DarkInvitation() {
         <button className="language-toggle" onClick={() => setUrdu(!urdu)}>◎ {urdu ? 'English' : 'اردو'}</button><button className="sound-toggle" onClick={toggleSound} aria-label={muted ? (urdu ? 'موسیقی آن کریں' : 'Unmute music') : (urdu ? 'موسیقی بند کریں' : 'Mute music')} aria-pressed={!muted}>{muted ? <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" /><path d="M16.5 9.5l5 5m0-5l-5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" fill="none" /></svg> : <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor" /><path d="M16.5 8.5a5 5 0 010 7M19 6a8.5 8.5 0 010 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" /></svg>}</button>
         <audio ref={audio} src="/media/wedding-song.mp3" loop preload="auto" aria-hidden="true" />
         <section className={`hero ${showNames ? 'names-visible' : ''}`}>
-            <video ref={video} src="/media/royal-opening.mp4" poster="/images/envelope.jpg" playsInline muted preload="auto" onTimeUpdate={e => { if (e.currentTarget.currentTime >= 6) setShowNames(true); }} onEnded={() => setShowNames(true)} onError={() => { setReady(true); setShowNames(true); }} />
+            <img className="hero-photo" src="/images/hero.jpg" alt="Bright white floral wedding archway" fetchPriority="high" />
             {!started && ready && <button className="opening-hit-area" onClick={start} aria-label={t('Tap to open your invitation', 'دعوت نامہ کھولیں')} />}
             <div className="hero-shade" />
             <GoldDust active={true} />
@@ -165,7 +171,7 @@ export default function DarkInvitation() {
         {showNames && (
             <>
                 <Marquee />
-                <section className="save-date-section" data-reveal><SaveDate urdu={urdu} /></section>
+                <InvitationSection urdu={urdu} />
                 <main id="main" dir={urdu ? 'rtl' : 'ltr'}>
                     <section className="gallery-section" data-reveal><Ornament /><div className="gallery-frame"><button className="gallery-image" onClick={() => setLightbox(slide)} aria-label="Open wedding photograph">{photos.map((p, i) => <img src={p.src} alt={p.alt} key={i} className={i === slide ? 'active' : ''} loading="lazy" />)}</button><button className="gallery-prev" onClick={() => setSlide(i => (i + 3) % 4)} aria-label="Previous photo">‹</button><button className="gallery-next" onClick={() => setSlide(i => (i + 1) % 4)} aria-label="Next photo">›</button></div><div className="gallery-dots">{photos.map((_, i) => <button key={i} className={i === slide ? 'active' : ''} onClick={() => setSlide(i)} aria-label={`Photo ${i + 1}`} aria-pressed={i === slide} />)}</div></section>
                     <Card title={t('Counting Down to Forever', 'ہماری خوشیوں کے آغاز میں')}><Countdown urdu={urdu} /></Card>
@@ -173,7 +179,7 @@ export default function DarkInvitation() {
                     <Card title={t('Venue & Location', 'مقامِ تقریب')}>
                         <Rose className="venue-rose" />
                         {w.venues.map((v, i) => (
-                            <div className="venue-card-item" key={i} style={i > 0 ? { marginTop: '26px', paddingTop: '22px', borderTop: '1px dashed #E9DDC9' } : undefined}>
+                            <div className="venue-card-item" key={i} style={i > 0 ? { marginTop: '26px', paddingTop: '22px', borderTop: '1px dashed #E7D3AE' } : undefined}>
                                 <span className="event-tag">{t(v.tag, v.tagUrdu)}</span>
                                 <h3 className="venue-title">{t(v.name, v.nameUrdu)}</h3>
                                 <p className="venue-address">{t(v.address, v.addressUrdu)}</p>

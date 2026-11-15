@@ -2,9 +2,10 @@
 
 A premium mobile-first digital wedding invitation (Next.js + React + TypeScript).
 
-- **Design:** Pure white `#FFFFFF` + champagne gold `#B89555` + deep burgundy `#842E49`
+- **Design:** Pure white `#FFFFFF` + champagne gold `#C49A45` + deep burgundy `#821B3D`
 - **Typography:** Great Vibes (names), Cormorant Garamond (headings), Lora (body), DM Sans (buttons & labels)
-- **Sample couple:** Bilal Aslam & Fatima Waheed (B·F) — Mehndi Sat 6 Mar 2027, Shalima Sun 7 Mar 2027
-- **Features:** animated envelope hero with video, gold dust, scratch-to-reveal heart, arched photo gallery, live countdown, program timeline, venue cards with Google Maps, Save the Date, background music, EN/UR toggle
+- **Couple:** Bilal Aslam & Fatima Waheed (B·F) — Mehndi Sat 16 Jan 2027, Shalima Sun 17 Jan 2027
+- **Venues:** Canel Home Hall, Lubaba Marquee
+- **Features:** bright floral-arch hero photo, gold dust, "Our forever begins" invitation section, save-the-date button, rectangular photo gallery, live countdown, program timeline, venue cards with Google Maps, background music, EN/UR toggle
 
 Live: https://ivory-romantic.vercel.app/

@@ -48,7 +48,7 @@ export const wedding = {
     "دو دل، ایک خوبصورت سفر۔\nہماری نئی زندگی کے آغاز میں\nاپنی محبتوں اور دعاؤں کے ساتھ شریک ہوں۔",
 
   // Scratch-to-reveal heart
-  dateText: "6 – 7 March 2027",
+  dateText: "16 – 17 January 2027",
   day: "Saturday & Sunday",
   time: "Mehndi 6 PM · Shalima 1 PM",
 
@@ -57,13 +57,13 @@ export const wedding = {
   punctualityUrdu: "براہِ کرم وقت پر تشریف لائیں — آپ کی پابندیِ وقت سے تقریب بروقت شروع ہوگی اور ہم سب مل کر ہر لمحہ لطف اٹھا سکیں گے۔ ♥",
 
   // Countdown + Save-the-date target (pehli taqreeb — Mehndi)
-  date: "2027-03-06T18:00:00+05:00",
-  venue: "Ivory Pearl Hall",
+  date: "2027-01-16T18:00:00+05:00",
+  venue: "Canel Home Hall",
   address: "Mehndi Venue",
 
   timeline: [
     {
-      day: "Saturday, 6 March 2027",
+      day: "Saturday, 16 January 2027",
       time: "6:00 PM",
       title: "Mehndi",
       urdu: "مہندی",
@@ -71,7 +71,7 @@ export const wedding = {
       noteUrdu: "",
     },
     {
-      day: "Sunday, 7 March 2027",
+      day: "Sunday, 17 January 2027",
       time: "1:00 PM",
       title: "Shalima",
       urdu: "شالیمہ",
@@ -84,22 +84,22 @@ export const wedding = {
     {
       tag: "Mehndi",
       tagUrdu: "مہندی",
-      name: "Ivory Pearl Hall",
-      nameUrdu: "ایوری پرل ہال",
-      address: "Saturday, 6 March 2027 · 6:00 PM onwards",
-      addressUrdu: "ہفتہ، 6 مارچ 2027 · شام 6 بجے سے",
-      mapQuery: "Ivory Pearl Hall",
-      mapUrl: "https://www.google.com/maps/search/?api=1&query=Ivory+Pearl+Hall",
+      name: "Canel Home Hall",
+      nameUrdu: "کینل ہوم ہال",
+      address: "Saturday, 16 January 2027 · 6:00 PM onwards",
+      addressUrdu: "ہفتہ، 16 جنوری 2027 · شام 6 بجے سے",
+      mapQuery: "Canel Home Hall",
+      mapUrl: "https://www.google.com/maps/search/?api=1&query=Canel+Home+Hall",
     },
     {
       tag: "Shalima",
       tagUrdu: "شالیمہ",
-      name: "Blossom Garden Marquee",
-      nameUrdu: "بلاسم گارڈن مارکی",
-      address: "Sunday, 7 March 2027 · 1:00 PM onwards",
-      addressUrdu: "اتوار، 7 مارچ 2027 · دوپہر 1 بجے سے",
-      mapQuery: "Blossom Garden Marquee",
-      mapUrl: "https://www.google.com/maps/search/?api=1&query=Blossom+Garden+Marquee",
+      name: "Lubaba Marquee",
+      nameUrdu: "لبابہ مارکی",
+      address: "Sunday, 17 January 2027 · 1:00 PM onwards",
+      addressUrdu: "اتوار، 17 جنوری 2027 · دوپہر 1 بجے سے",
+      mapQuery: "Lubaba Marquee",
+      mapUrl: "https://www.google.com/maps/search/?api=1&query=Lubaba+Marquee",
     },
   ] as Venue[],
 
